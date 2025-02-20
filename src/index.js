@@ -9,36 +9,31 @@ import connectDB from "./db/index.js";
 dotenv.config({
   path: "./env",
 });
+
 connectDB()
   .then(() => {
     app.listen(process.env.PORT || 3000, () => {
-      console.log("server is running");
+      console.log(`server is running on  http://localhost:${process.env.PORT}`);
     });
   })
   .catch((error) => {
     console.error("MongoDB connection Failed", error);
   });
+// Middleware
+app.use(express.json()); // Necessary for parsing JSON requests
+app.use((req, res, next) => {
+  console.log(`Received ${req.method} request on ${req.url}`);
+  next();
+});
+// Test Route
+app.get("/", (req, res) => {
+  console.log("Root route accessed");
+  res.send("Server is working!");
+});
 
-// import express from "express";
-// const app = express()(
-//   // ify-> call the function immediately ||semi-colon is used just for the cleaning purposes
+//routes import
+import userRouter from "./routes/user.routes.js";
 
-//   // whenever use the datbase always use try-catch or promises
-
-// async () => {
-//     try {
-//       mongoose.connect(`${process.env.MONGODB_URI}/${DB_NAME}`);
-//       app.on("error", (error) => {
-//         console.error("ERR:", error);
-//         throw error;
-//       });
-
-//       app.listen(process.env.PORT, () => {
-//         console.log(`app listening on port,${process.env.PORT}`);
-//       });
-//     } catch (error) {
-//       console.error("Error:", error);
-//       throw error;
-//     }
-//   }
-// )();
+//routes declaration
+app.use("/api/v1/users", userRouter);
+export { app };
