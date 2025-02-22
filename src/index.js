@@ -19,21 +19,18 @@ connectDB()
   .catch((error) => {
     console.error("MongoDB connection Failed", error);
   });
-// Middleware
-app.use(express.json()); // Necessary for parsing JSON requests
-app.use((req, res, next) => {
-  console.log(`Received ${req.method} request on ${req.url}`);
-  next();
-});
+
 // Test Route
 app.get("/", (req, res) => {
   console.log("Root route accessed");
   res.send("Server is working!");
 });
-
 //routes import
 import userRouter from "./routes/user.routes.js";
-
+// Middleware
+app.use(express.json()); // Necessary for parsing JSON requests
 //routes declaration
+
+app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/users", userRouter);
 export { app };
